@@ -5,9 +5,7 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber.Exception;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
-import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_highgui.*;
@@ -18,6 +16,7 @@ public class CarVideoDetection {
     private volatile Frame[] videoFrame = new Frame[1];
     private volatile Mat[] v = new Mat[1];
     private Thread thread;
+    private volatile boolean stop = false;
 
     public static void main(String[] args) throws java.lang.Exception {
         new CarVideoDetection().startRealTimeVideoDetection("resources/videoSample.mp4");
@@ -27,7 +26,7 @@ public class CarVideoDetection {
 
         File f = new File(videoFileName);
 
-        FFmpegFrameGrabber grabber = null;
+        FFmpegFrameGrabber grabber;
         try {
             grabber = new FFmpegFrameGrabber(f);
             grabber.start();
@@ -35,7 +34,7 @@ public class CarVideoDetection {
             System.err.println("Failed start the grabber.");
             throw new RuntimeException(e);
         }
-        while (true) {
+        while (!stop) {
             videoFrame[0] = grabber.grab();
             if (videoFrame[0] == null) {
                 stop();
@@ -48,7 +47,7 @@ public class CarVideoDetection {
 
             if (thread == null) {
                 thread = new Thread(() -> {
-                    while (videoFrame[0] != null) {
+                    while (videoFrame[0] != null && !stop) {
                         try {
                             TinyYoloPrediction.getINSTANCE().markWithBoundingBox(v[0], videoFrame[0].imageWidth, videoFrame[0].imageHeight, true);
                         } catch (java.lang.Exception e) {
@@ -65,13 +64,16 @@ public class CarVideoDetection {
             char key = (char) waitKey(20);
             // Exit this loop on escape:
             if (key == 27) {
-                destroyAllWindows();
+                destroyWindow(AUTONOMOUS_DRIVING_RAMOK_TECH);
                 break;
             }
         }
     }
 
     public void stop() {
-        destroyAllWindows();
+        if (!stop) {
+            stop = true;
+            destroyWindow(AUTONOMOUS_DRIVING_RAMOK_TECH);
+        }
     }
 }

@@ -7,8 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.util.concurrent.Executors;
 
 /**
  * Created by klevis.ramo on 1/18/2018.
@@ -37,12 +36,19 @@ public class UI {
         mainPanel.add(chooseVideo);
         JButton start = new JButton("Start Detection!");
         start.addActionListener(e -> {
-            try {
-                carVideoDetection = new CarVideoDetection();
-                carVideoDetection.startRealTimeVideoDetection(selectedFile.getAbsolutePath());
-            } catch (Exception e1) {
-                throw new RuntimeException(e1);
-            }
+            ProgressBar progressBar = new ProgressBar(mainFrame);
+            SwingUtilities.invokeLater(() -> progressBar.showProgressBar("Detecting video..."));
+            Executors.newCachedThreadPool().submit(() -> {
+                try {
+                    carVideoDetection = new CarVideoDetection();
+                    carVideoDetection.startRealTimeVideoDetection(selectedFile.getAbsolutePath());
+                } catch (Exception e1) {
+                    throw new RuntimeException(e1);
+                } finally {
+
+                    progressBar.setVisible(false);
+                }
+            });
         });
         mainPanel.add(start);
         JButton stop = new JButton("Stop");
