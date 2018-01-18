@@ -1,14 +1,15 @@
 package ramo.klevis;
 
+import org.bytedeco.javacpp.opencv_core;
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.layers.objdetect.DetectedObject;
+import org.deeplearning4j.nn.layers.objdetect.Yolo2OutputLayer;
 import org.deeplearning4j.zoo.model.TinyYOLO;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,83 +19,63 @@ import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_highgui.imshow;
 import static org.bytedeco.javacpp.opencv_imgproc.putText;
 import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
+import static ramo.klevis.CarVideoDetection.AUTONOMOUS_DRIVING_RAMOK_TECH;
 
 
 public class TinyYoloPrediction {
-    private static final Logger log = LoggerFactory.getLogger(TinyYoloPrediction.class);
-    private static ComputationGraph pretrained;
-    private static List<DetectedObject> predictedObjects;
-    private static HashMap<Integer, String> map;
 
-    public static void main(String[] args) throws Exception {
+    private ComputationGraph preTrained;
+    private List<DetectedObject> predictedObjects;
+    private HashMap<Integer, String> map;
 
+    private TinyYoloPrediction() {
+        try {
+            preTrained = (ComputationGraph) new TinyYOLO().initPretrained();
+            prepareLabels();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static void predict2(Mat file, int imageWidth, int imageHeight, boolean predict) throws java.io.IOException, InterruptedException {
-        putLabels();
+    private static final TinyYoloPrediction INSTANCE = new TinyYoloPrediction();
+
+    public static TinyYoloPrediction getINSTANCE() {
+        return INSTANCE;
+    }
+
+    public void markWithBoundingBox(Mat file, int imageWidth, int imageHeight, boolean newBoundingBOx) throws Exception {
         int width = 416;
         int height = 416;
         int gridWidth = 13;
         int gridHeight = 13;
-        int w = imageWidth;
-        int h = imageHeight;
-
-
-//        double[][] priorBoxes = {{1.08, 1.19}, {3.42, 4.41}, {6.63, 11.38}, {9.42, 5.11}, {16.62, 10.52}};
         double detectionThreshold = 0.5;
 
-
-        if (pretrained == null) {
-            pretrained = (ComputationGraph) new TinyYOLO().initPretrained();
-        }
-
-        org.deeplearning4j.nn.layers.objdetect.Yolo2OutputLayer yout =
-                (org.deeplearning4j.nn.layers.objdetect.Yolo2OutputLayer) pretrained.getOutputLayer(0);
-
-
-        if (predict) {
-            long l = System.currentTimeMillis();
-            NativeImageLoader loader = new NativeImageLoader(height, width, 3);
-            ImagePreProcessingScaler imagePreProcessingScaler = new ImagePreProcessingScaler(0, 1);
-            INDArray indArray = loader.asMatrix(file);
-            imagePreProcessingScaler.transform(indArray);
-            System.out.println("0 " + (System.currentTimeMillis() - l));
-            l = System.currentTimeMillis();
-            INDArray results = pretrained.outputSingle(indArray);
-            predictedObjects = yout.getPredictedObjects(results, detectionThreshold);
-            System.out.println("1 " + (System.currentTimeMillis() - l));
-            l = System.currentTimeMillis();
-            System.out.println("objs = " + predictedObjects);
-            System.out.println("2 " + (System.currentTimeMillis() - l));
-            boundingBox(file, gridWidth, gridHeight, w, h);
+        Yolo2OutputLayer outputLayer = (Yolo2OutputLayer) preTrained.getOutputLayer(0);
+        if (newBoundingBOx) {
+            INDArray indArray = prepareImage(file, width, height);
+            INDArray results = preTrained.outputSingle(indArray);
+            predictedObjects = outputLayer.getPredictedObjects(results, detectionThreshold);
+            System.out.println("results = " + predictedObjects);
+            markWithBoundingBox(file, gridWidth, gridHeight, imageWidth, imageHeight);
         } else {
-            boundingBox(file, gridWidth, gridHeight, w, h);
+            markWithBoundingBox(file, gridWidth, gridHeight, imageWidth, imageHeight);
         }
-        imshow("face_recognizer", file);
+        imshow(AUTONOMOUS_DRIVING_RAMOK_TECH, file);
     }
 
-    private static void putLabels() {
+    private INDArray prepareImage(Mat file, int width, int height) throws IOException {
+        NativeImageLoader loader = new NativeImageLoader(height, width, 3);
+        ImagePreProcessingScaler imagePreProcessingScaler = new ImagePreProcessingScaler(0, 1);
+        INDArray indArray = loader.asMatrix(file);
+        imagePreProcessingScaler.transform(indArray);
+        return indArray;
+    }
+
+    private void prepareLabels() {
         if (map == null) {
-            String s = "aeroplane\n" +
-                    "bicycle\n" +
-                    "bird\n" +
-                    "boat\n" +
-                    "bottle\n" +
-                    "bus\n" +
-                    "car\n" +
-                    "cat\n" +
-                    "chair\n" +
-                    "cow\n" +
-                    "diningtable\n" +
-                    "dog\n" +
-                    "horse\n" +
-                    "motorbike\n" +
-                    "person\n" +
-                    "pottedplant\n" +
-                    "sheep\n" +
-                    "sofa\n" +
-                    "train\n" +
-                    "tvmonitor";
+            String s = "aeroplane\n" + "bicycle\n" + "bird\n" + "boat\n" + "bottle\n" + "bus\n" + "car\n" +
+                    "cat\n" + "chair\n" + "cow\n" + "diningtable\n" + "dog\n" + "horse\n" + "motorbike\n" +
+                    "person\n" + "pottedplant\n" + "sheep\n" + "sofa\n" + "train\n" + "tvmonitor";
             String[] split = s.split("\\n");
             int i = 0;
             map = new HashMap<>();
@@ -104,7 +85,7 @@ public class TinyYoloPrediction {
         }
     }
 
-    private static void boundingBox(Mat file, int gridWidth, int gridHeight, int w, int h) {
+    private void markWithBoundingBox(Mat file, int gridWidth, int gridHeight, int w, int h) {
 
         if (predictedObjects == null) {
             return;
@@ -115,16 +96,16 @@ public class TinyYoloPrediction {
             Optional<DetectedObject> max = detectedObjects.stream().max((o1, o2) -> ((Double) o1.getConfidence()).compareTo(o2.getConfidence()));
             if (max.isPresent()) {
                 DetectedObject maxObjectDetect = max.get();
-                double[] bottomRightXY1 = maxObjectDetect.getBottomRightXY();
-                double[] topLeftXY1 = maxObjectDetect.getTopLeftXY();
+                removeObjectsIntersectingWithMax(detectedObjects, maxObjectDetect);
                 detectedObjects.remove(maxObjectDetect);
-                removeObjectsIntersectingWithMax(detectedObjects, bottomRightXY1, topLeftXY1);
-                predict(file, gridWidth, gridHeight, w, h, maxObjectDetect);
+                markWithBoundingBox(file, gridWidth, gridHeight, w, h, maxObjectDetect);
             }
         }
     }
 
-    private static void removeObjectsIntersectingWithMax(ArrayList<DetectedObject> detectedObjects, double[] bottomRightXY1, double[] topLeftXY1) {
+    private static void removeObjectsIntersectingWithMax(ArrayList<DetectedObject> detectedObjects, DetectedObject maxObjectDetect) {
+        double[] bottomRightXY1 = maxObjectDetect.getBottomRightXY();
+        double[] topLeftXY1 = maxObjectDetect.getTopLeftXY();
         List<DetectedObject> removeIntersectingObjects = new ArrayList<>();
         for (DetectedObject detectedObject : detectedObjects) {
             double[] topLeftXY = detectedObject.getTopLeftXY();
@@ -152,20 +133,17 @@ public class TinyYoloPrediction {
         detectedObjects.removeAll(removeIntersectingObjects);
     }
 
-    private static void predict(Mat file, int gridWidth, int gridHeight, int w, int h, DetectedObject obj) {
-        long l;
-        l = System.currentTimeMillis();
+    private void markWithBoundingBox(Mat file, int gridWidth, int gridHeight, int w, int h, DetectedObject obj) {
+
         double[] xy1 = obj.getTopLeftXY();
         double[] xy2 = obj.getBottomRightXY();
         int predictedClass = obj.getPredictedClass();
-        System.out.println("predictedClass = " + predictedClass);
         int x1 = (int) Math.round(w * xy1[0] / gridWidth);
         int y1 = (int) Math.round(h * xy1[1] / gridHeight);
         int x2 = (int) Math.round(w * xy2[0] / gridWidth);
         int y2 = (int) Math.round(h * xy2[1] / gridHeight);
         rectangle(file, new Point(x1, y1), new Point(x2, y2), Scalar.RED);
         putText(file, map.get(predictedClass), new Point(x1 + 2, y2 - 2), FONT_HERSHEY_DUPLEX, 1, Scalar.GREEN);
-        System.out.println("3 " + (System.currentTimeMillis() - l));
     }
 
 }

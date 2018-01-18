@@ -139,7 +139,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>ramo.klevis.TinyYoloPrediction</mainClass>
+                    <mainClass>ramo.klevis.Run</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -156,7 +156,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ramo.klevis.TinyYoloPrediction</mainClass>
+                            <mainClass>ramo.klevis.Run</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
