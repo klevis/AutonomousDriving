@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_highgui.*;
-import static ramo.klevis.Run.predict2;
+import static ramo.klevis.TinyYoloPrediction.predict2;
 
 public class CarRecognizerInVideo {
 

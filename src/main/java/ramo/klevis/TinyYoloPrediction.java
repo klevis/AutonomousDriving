@@ -19,27 +19,14 @@ import static org.bytedeco.javacpp.opencv_highgui.imshow;
 import static org.bytedeco.javacpp.opencv_imgproc.putText;
 import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
 
-/**
- * Example transfer learning from a Tiny YOLO model pretrained on ImageNet and Pascal VOC
- * to perform object detection with bounding boxes on images of red blood cells.
- * <p>
- * References: <br>
- * - YOLO: Real-Time Object Detection: https://pjreddie.com/darknet/yolo/ <br>
- * - Images of red blood cells: https://github.com/cosmicad/dataset <br>
- * <p>
- * Please note, cuDNN should be used to obtain reasonable performance: https://deeplearning4j.org/cudnn
- *
- * @author saudet
- */
-public class Run {
-    private static final Logger log = LoggerFactory.getLogger(RedBloodCellDetection.class);
+
+public class TinyYoloPrediction {
+    private static final Logger log = LoggerFactory.getLogger(TinyYoloPrediction.class);
     private static ComputationGraph pretrained;
     private static List<DetectedObject> predictedObjects;
     private static HashMap<Integer, String> map;
 
     public static void main(String[] args) throws Exception {
-//        predict2(ImageIO.read(new File("C:\\Users\\klevis.ramo\\Desktop\\cars.jpg")));
-
 
     }
 
