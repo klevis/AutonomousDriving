@@ -14,12 +14,13 @@ import java.util.concurrent.Executors;
  */
 public class UI {
 
-    private static final int FRAME_WIDTH = 300;
+    private static final int FRAME_WIDTH = 400;
     private static final int FRAME_HEIGHT = 120;
     private JFrame mainFrame;
     private JPanel mainPanel;
     private File selectedFile = new File("resources/videoSample.mp4");
     private CarVideoDetection carVideoDetection;
+    private ProgressBar progressBar;
 
 
     public void initUI() throws Exception {
@@ -36,7 +37,7 @@ public class UI {
         mainPanel.add(chooseVideo);
         JButton start = new JButton("Start Detection!");
         start.addActionListener(e -> {
-            ProgressBar progressBar = new ProgressBar(mainFrame);
+            progressBar = new ProgressBar(mainFrame);
             SwingUtilities.invokeLater(() -> progressBar.showProgressBar("Detecting video..."));
             Executors.newCachedThreadPool().submit(() -> {
                 try {
@@ -45,7 +46,6 @@ public class UI {
                 } catch (Exception e1) {
                     throw new RuntimeException(e1);
                 } finally {
-
                     progressBar.setVisible(false);
                 }
             });
@@ -56,10 +56,11 @@ public class UI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 carVideoDetection.stop();
+
+                progressBar.setVisible(false);
             }
         });
         mainPanel.add(stop);
-
         addSignature();
 
         mainFrame.add(mainPanel, BorderLayout.CENTER);

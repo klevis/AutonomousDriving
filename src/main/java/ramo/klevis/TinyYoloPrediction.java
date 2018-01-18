@@ -1,6 +1,5 @@
 package ramo.klevis;
 
-import org.bytedeco.javacpp.opencv_core;
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.layers.objdetect.DetectedObject;
@@ -19,7 +18,6 @@ import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_highgui.imshow;
 import static org.bytedeco.javacpp.opencv_imgproc.putText;
 import static org.bytedeco.javacpp.opencv_imgproc.rectangle;
-import static ramo.klevis.CarVideoDetection.AUTONOMOUS_DRIVING_RAMOK_TECH;
 
 
 public class TinyYoloPrediction {
@@ -43,7 +41,7 @@ public class TinyYoloPrediction {
         return INSTANCE;
     }
 
-    public void markWithBoundingBox(Mat file, int imageWidth, int imageHeight, boolean newBoundingBOx) throws Exception {
+    public void markWithBoundingBox(Mat file, int imageWidth, int imageHeight, boolean newBoundingBOx,String winName) throws Exception {
         int width = 416;
         int height = 416;
         int gridWidth = 13;
@@ -60,7 +58,7 @@ public class TinyYoloPrediction {
         } else {
             markWithBoundingBox(file, gridWidth, gridHeight, imageWidth, imageHeight);
         }
-        imshow(AUTONOMOUS_DRIVING_RAMOK_TECH, file);
+        imshow(winName, file);
     }
 
     private INDArray prepareImage(Mat file, int width, int height) throws IOException {
