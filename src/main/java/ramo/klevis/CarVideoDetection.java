@@ -29,13 +29,8 @@ public class CarVideoDetection {
         File f = new File(videoFileName);
 
         FFmpegFrameGrabber grabber;
-        try {
-            grabber = new FFmpegFrameGrabber(f);
-            grabber.start();
-        } catch (Exception e) {
-            System.err.println("Failed start the grabber.");
-            throw new RuntimeException(e);
-        }
+        grabber = new FFmpegFrameGrabber(f);
+        grabber.start();
         while (!stop) {
             videoFrame[0] = grabber.grab();
             if (videoFrame[0] == null) {
