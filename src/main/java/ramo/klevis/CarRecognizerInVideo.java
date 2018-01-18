@@ -1,30 +1,20 @@
 package ramo.klevis;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.ScheduledExecutorService;
-
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber.Exception;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 
-import static org.bytedeco.javacpp.opencv_core.*;
+import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_highgui.*;
 import static ramo.klevis.Run.predict2;
 
-/**
- * This is an example how to detect face in a video file with javacv
- *
- * @author Vincent He (chinadragon0515@gmail.com)
- */
-public class FaceRecognizerInVideo {
+public class CarRecognizerInVideo {
 
-    private static ScheduledExecutorService scheduledExecutorService;
-    private static Thread thread;
     static volatile Frame[] videoFrame = new Frame[1];
     static volatile Mat[] v = new Mat[1];
 
