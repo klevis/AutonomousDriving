@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.nd4j:nd4j-native:android-x86:0.9.2-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/nd4j/nd4j-native/0.9.2-SNAPSHOT/nd4j-native-0.9.2-20180117.143538-1055-android-x86.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/nd4j/nd4j-native/0.9.2-SNAPSHOT/nd4j-native-0.9.2-20180117.143538-1055-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/nd4j/nd4j-native/0.9.2-SNAPSHOT/nd4j-native-0.9.2-20180117.143538-1055-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
