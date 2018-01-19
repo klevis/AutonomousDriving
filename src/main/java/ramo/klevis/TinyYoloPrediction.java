@@ -109,10 +109,10 @@ public class TinyYoloPrediction {
             double[] topLeftXY = detectedObject.getTopLeftXY();
             double[] bottomRightXY = detectedObject.getBottomRightXY();
             double iox1 = Math.max(topLeftXY[0], topLeftXY1[0]);
-            double ioy1 = Math.min(topLeftXY[1], topLeftXY1[1]);
+            double ioy1 = Math.max(topLeftXY[1], topLeftXY1[1]);
 
             double iox2 = Math.min(bottomRightXY[0], bottomRightXY1[0]);
-            double ioy2 = Math.max(bottomRightXY[1], bottomRightXY1[1]);
+            double ioy2 = Math.min(bottomRightXY[1], bottomRightXY1[1]);
 
             double inter_area = (ioy2 - ioy1) * (iox2 - iox1);
 
