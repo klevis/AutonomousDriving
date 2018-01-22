@@ -6,8 +6,8 @@ For more please visit below post:
 
 http://ramok.tech/2018/01/18/java-autonomous-driving-car-detection/
 
-Also please find here a short example video(GIF)
-http://ramok.tech/wp-content/uploads/2018/01/ezgif.com-video-to-gif-1.gif
+Also please find here a short example video:
+http://ramok.tech/wp-content/uploads/2018/01/2018-01-22_15h29_24.mp4
 
 <p align="center">
   <img src="https://i2.wp.com/ramok.tech/wp-content/uploads/2018/01/2018-01-18_23h37_56.jpg?w=646" width="600"/>
