@@ -47,13 +47,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-native</artifactId>
-            <version>${deeplearning4j}</version>
-            <classifier>windows-x86_64-avx2</classifier>
-        </dependency>
-
-        <dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-zoo</artifactId>
             <version>${deeplearning4j}</version>
