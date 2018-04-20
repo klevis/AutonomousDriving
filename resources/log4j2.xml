@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorinterval="30" status="info" strict="true">
+    <Properties>
+        <property name="pattern">%-5p [%d{yyyy-MM-dd HH:mm:ss.SSS}][%t][%c] %m%n</property>
+    </Properties>
+    <Appenders>
+        <Console name="stdout" target="SYSTEM_OUT">
+            <Layout type="PatternLayout" pattern="${pattern}"/>
+        </Console>
+        <File name="DigitRecognizer" fileName="DigitRecognizer.log">
+            <Layout type="PatternLayout" pattern="${pattern}"/>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="stdout" level="info"/>
+            <AppenderRef ref="DigitRecognizer" level="error"/>
+        </Root>
+    </Loggers>
+</Configuration>

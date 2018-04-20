@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native-platform</artifactId>
-            <version>${deeplearning4j}</version>
+            <version>1.0.0-alpha</version>
         </dependency>
 
         <dependency>
